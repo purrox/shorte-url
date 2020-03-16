@@ -1,0 +1,15 @@
+h1{
+  text-align: center;
+}
+
+span.error{
+  color: #f31e1e;
+  font-weight: bold;
+}
+span.warning{
+  color: #a2a20b;
+  font-weight: bold;
+}
+.jumbotron{
+  background-color: white !important;
+}
