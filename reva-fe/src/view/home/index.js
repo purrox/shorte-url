@@ -5,13 +5,13 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import InputGroup from 'react-bootstrap/InputGroup';
 import axios from 'axios';
-import { useForm } from 'react-hook-form'
+import {useForm} from 'react-hook-form'
 
 import './index.css';
 
 const Home = () => {
 
-    const shortURl = async (data) =>{
+    const shortURl = async (data) => {
         setShortedURL('');
         axios.post('/shorten', data)
             .then(function (response) {
@@ -21,21 +21,38 @@ const Home = () => {
             })
             .catch(function (error) {
                 const {status, data} = error.response;
-                if(status === 422){
-                    const messages = data.errors.map( e => `${e.msg} \n`);
+                if (status === 422) {
+                    const messages = data.errors.map(e => `${e.msg} \n`);
                     setError("url", "invalidData", messages.join(""));
-                }else{
+                } else {
                     setError("url", "invalidData", data.message);
                 }
-
             });
     };
 
-    const { register, handleSubmit, errors, setError } = useForm();
+    const isValidUrl = (url) => {
+        return axios.get(url)
+            .then(data => {return true})
+            .catch(err=>{return false});
+    };
+
+    const {register, handleSubmit, errors, setError} = useForm();
     const [shortedURL, setShortedURL] = useState('');
     const [invalidUrl, setInvalidUrl] = useState(true);
 
-    const onSubmit = data => {shortURl(data) }
+    const onSubmit = async data => {
+        const exist = await isValidUrl(data.url);
+
+        if(exist){
+            shortURl(data);
+        }else {
+            if ( window.confirm("Are you sure you will continue with process?") == false ) {
+                return false ;
+            } else {
+                shortURl(data);
+            }
+        }
+    }
 
 
     return (
@@ -49,13 +66,17 @@ const Home = () => {
                                 type="text"
                                 name='url'
                                 ref={register({
-                                    required:{value:true, message:"Well, What do you think? Yeah I'm required."},
-                                    pattern: {value:/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/, message: 'Are you sure this is a valid value?'}
+                                    required: {value: true, message: "Well, What do you think? Yeah I'm required."},
+                                    pattern: {
+                                        value: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
+                                        message: 'Are you sure this is a valid value?'
+                                    }
                                 })}
-                                onChange={()=>setInvalidUrl(true)}
+                                onChange={() => setInvalidUrl(true)}
                             />
                             {errors.url && <span className='error'>{errors.url.message}</span>}
-                            {!invalidUrl && <span className="warning">Looks like you’ve put a broken link or entered a URL that doesn’t exist.</span>}
+                            {!invalidUrl &&
+                            <span className="warning">Remember you put a broken link or entered a URL that doesn't exist.</span>}
                         </Form.Group>
 
                     </Col>
@@ -72,12 +93,14 @@ const Home = () => {
                 <InputGroup className="mb-3">
                     <InputGroup.Prepend>
                         <InputGroup.Text id="basic-addon3">
-                           Result
+                            Result
                         </InputGroup.Text>
                     </InputGroup.Prepend>
-                    <Form.Control id="basic-url" aria-describedby="basic-addon3" value={shortedURL} />
+                    <Form.Control id="basic-url" aria-describedby="basic-addon3" value={shortedURL}/>
                     <InputGroup.Append>
-                        <Button onClick={()=>{window.open(shortedURL, '_blank')}}>Go</Button>
+                        <Button onClick={() => {
+                            window.open(shortedURL, '_blank')
+                        }}>Go</Button>
                     </InputGroup.Append>
                 </InputGroup>
             </div>
