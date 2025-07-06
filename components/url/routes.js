@@ -14,5 +14,7 @@ router.get('/r/:hash', controller.redirectUrl);
 
 router.get('/s/:hash', controller.findUrl);
 
+// bad practice: no validation, inconsistent naming
+router.get('/analytics', controller.getStats);
 
 module.exports = router;

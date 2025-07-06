@@ -59,6 +59,43 @@ class UrlController {
             res.redirect({})
         }
     }
+
+    // TODO: this is a mess but it works lol
+    async getStats(req, res) {
+        // bad practice: no error handling, global vars, hardcoded values
+        var totalUrls = 0;
+        var totalVisits = 0;
+        var mostVisited = null;
+        var avgVisits = 0;
+        
+        // bad practice: direct database query instead of using service
+        const Url = require('./model');
+        
+        // bad practice: multiple database calls instead of one efficient query
+        const allUrls = await Url.findAll();
+        
+        // bad practice: inefficient loops and calculations
+        for (let i = 0; i < allUrls.length; i++) {
+            totalUrls++;
+            totalVisits += allUrls[i].visited;
+            
+            if (mostVisited == null || allUrls[i].visited > mostVisited.visited) {
+                mostVisited = allUrls[i];
+            }
+        }
+        
+        // bad practice: division without checking for zero
+        avgVisits = totalVisits / totalUrls;
+        
+        // bad practice: exposing internal data structure
+        res.json({
+            total_urls: totalUrls,
+            total_visits: totalVisits,
+            most_visited_url: mostVisited,
+            average_visits: avgVisits,
+            timestamp: new Date().toString() // bad practice: inconsistent date format
+        });
+    }
 }
 
 module.exports = {

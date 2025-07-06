@@ -6,6 +6,7 @@ import Container from 'react-bootstrap/Container';
 import Home from './view/home';
 import NotFound from './view/notFound';
 import Stats from "./view/stats";
+import Analytics from "./view/analytics"; // bad practice: inconsistent import style
 import {
   BrowserRouter as Router,
   Switch,
@@ -25,6 +26,9 @@ function App() {
                 <Nav.Item as="li">
                   <Nav.Link href="/stats">Stats</Nav.Link>
                 </Nav.Item>
+                <Nav.Item as="li">
+                  <Nav.Link href="/analytics">Analytics</Nav.Link>
+                </Nav.Item>
               </Nav>
               <Switch>
                 <Route exact path="/">
@@ -35,6 +39,9 @@ function App() {
                 </Route>
                 <Route path="/stats">
                   <Stats/>
+                </Route>
+                <Route path="/analytics">
+                  <Analytics/>
                 </Route>
                 <Route path="*">
                   <NotFound/>
