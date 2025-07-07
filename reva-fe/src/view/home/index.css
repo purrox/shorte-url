@@ -1,0 +1,13 @@
+
+.shorten-form{
+    padding: 40px;
+    border-bottom: 5px solid black;
+}
+
+.shorten-form button{
+    margin-top: 7px;
+}
+.shorten-result{
+    margin: 45px auto;
+    width: 55%;
+}
