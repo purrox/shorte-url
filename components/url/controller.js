@@ -78,7 +78,7 @@ class UrlController {
         for (let i = 0; i < allUrls.length; i++) {
             totalUrls++;
             totalVisits += allUrls[i].visited;
-            
+avgVisits = totalUrls > 0 ? totalVisits / totalUrls : 0;
             if (mostVisited == null || allUrls[i].visited > mostVisited.visited) {
                 mostVisited = allUrls[i];
             }
